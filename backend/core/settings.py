@@ -24,7 +24,7 @@ INSTALLED_APPS = [
 
     # Our apps
     'users',
-    'restaurants',
+    'restaurant',
     'menu',
     'orders',
     'payments',
