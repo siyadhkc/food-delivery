@@ -26,7 +26,8 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/restaurant/', include('restaurant.urls')),
     path('api/menu/', include('menu.urls')),
-    # orders and payments coming next
+    path('api/orders/', include('orders.urls')),
+    path('api/payments/', include('payments.urls')),
 ]
 
 # WHY this at the bottom?
