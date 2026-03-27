@@ -1,5 +1,6 @@
-function Cart() {
-  return <h1>Cart</h1>;
+const RestaurantDetail = () => {
+  
+    
 }
 
-export default Cart;
+export default RestaurantDetail;
