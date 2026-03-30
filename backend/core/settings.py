@@ -152,3 +152,36 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+
+import dj_database_url
+import os
+
+# WhiteNoise for static files
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Production database — reads DATABASE_URL from environment
+if os.environ.get('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.parse(
+        os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+    )
+    """
+    WHY dj_database_url?
+    Render gives you a DATABASE_URL like:
+    postgresql://user:pass@host:5432/dbname
+    dj_database_url parses this into Django's
+    DATABASES dict format automatically.
+    No need to manually set NAME, USER, PASSWORD etc.
+    """
+
+# Production CORS — only allow your Vercel frontend
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',       # local dev
+    'https://your-app.vercel.app', # replace after Vercel deploy
+]
+CORS_ALLOW_ALL_ORIGINS = False
+
+# Security for production
+ALLOWED_HOSTS = ['*']
