@@ -6,6 +6,7 @@ import {
     Tooltip, ResponsiveContainer, PieChart, Pie,
     Cell, Legend
 } from 'recharts'
+import { formatOrderId } from '../../utils/helpers'
 /*
 WHY Recharts?
 The PDF specifically requires:
@@ -221,7 +222,7 @@ const AdminDashboard = () => {
                                 <tbody>
                                     {stats.recentOrders.map(order => (
                                         <tr key={order.id} style={styles.tableRow}>
-                                            <td style={styles.td}>#{order.id}</td>
+                                            <td style={styles.td}>{formatOrderId(order.id)}</td>
                                             <td style={styles.td}>{order.user_email}</td>
                                             <td style={styles.td}>{order.restaurant_name}</td>
                                             <td style={styles.td}>₹{order.total_amount}</td>

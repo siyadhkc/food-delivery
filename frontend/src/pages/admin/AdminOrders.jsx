@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import AdminSidebar from '../../components/AdminSidebar'
 import api from '../../api/axios'
 import toast from 'react-hot-toast'
+import { formatDate, formatOrderId } from '../../utils/helpers'
 
 const STATUS_OPTIONS = [
     'pending', 'preparing',
@@ -111,13 +112,12 @@ const AdminOrders = () => {
                             <tbody>
                                 {filteredOrders.map(order => (
                                     <tr key={order.id} style={styles.tableRow}>
-                                        <td style={styles.td}>#{order.id}</td>
+                                        <td style={styles.td}>#{formatOrderId(order.id)}</td>
                                         <td style={styles.td}>{order.user_email}</td>
                                         <td style={styles.td}>{order.restaurant_name}</td>
                                         <td style={styles.td}>₹{order.total_amount}</td>
                                         <td style={styles.td}>
-                                            {new Date(order.created_at)
-                                                .toLocaleDateString()}
+                                             {formatDate(order.created_at)}
                                         </td>
                                         <td style={styles.td}>
                                             <span style={{

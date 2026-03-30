@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import api from '../api/axios'
 import toast from 'react-hot-toast'
+import { formatOrderId, formatDate } from '../utils/helpers'
+
 /*
 WHY status colors as a config object?
 Instead of writing if/else for every status,
@@ -148,21 +150,11 @@ const OrderHistory = () => {
                                     >
                                         <div style={styles.orderMeta}>
                                             <h3 style={styles.orderId}>
-                                                Order #{order.id}
-                                            </h3>
-                                            <p style={styles.orderRestaurant}>
-                                                🍽️ {order.restaurant_name}
-                                            </p>
-                                            <p style={styles.orderDate}>
-                                                {new Date(order.created_at)
-                                                    .toLocaleDateString('en-IN', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                    })}
-                                            </p>
+                                                    {formatOrderId(order.id)}
+                                                </h3>
+                                                <p style={styles.orderDate}>
+                                                    {formatDate(order.created_at)}
+                                                </p>
                                         </div>
 
                                         <div style={styles.orderRight}>
