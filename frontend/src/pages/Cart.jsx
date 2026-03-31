@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
+import { getImageUrl } from '../utils/helpers'
 import toast from 'react-hot-toast'
 
 const Cart = () => {
@@ -138,7 +139,7 @@ const Cart = () => {
                                     <div style={styles.itemImage}>
                                         {item.menu_item_image ? (
                                             <img
-                                                src={`http://127.0.0.1:8000${item.menu_item_image}`}
+                                                src={getImageUrl(item.menu_item_image)}
                                                 alt={item.menu_item_name}
                                                 style={styles.image}
                                             />

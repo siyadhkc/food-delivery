@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import AdminSidebar from '../../components/AdminSidebar'
 import api from '../../api/axios'
+import { getImageUrl } from '../../utils/helpers'
 import toast from 'react-hot-toast'
 
 const AdminMenu = () => {
@@ -177,7 +178,7 @@ const AdminMenu = () => {
                                         <td style={styles.td}>
                                             {item.image ? (
                                                 <img
-                                                    src={`http://127.0.0.1:8000${item.image}`}
+                                                    src={getImageUrl(item.image)}
                                                     alt={item.name}
                                                     style={styles.itemImg}
                                                 />

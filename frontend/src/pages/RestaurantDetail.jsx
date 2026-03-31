@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import { useAuth } from '../context/AuthContext'
+import { getImageUrl } from '../utils/helpers'
 import toast from 'react-hot-toast'
 
 const RestaurantDetail = () => {
@@ -131,7 +132,7 @@ const RestaurantDetail = () => {
                 <div style={styles.headerContent}>
                     {restaurant.logo && (
                         <img
-                            src={`http://127.0.0.1:8000${restaurant.logo}`}
+                            src={getImageUrl(restaurant.logo)}
                             alt={restaurant.name}
                             style={styles.logo}
                         />
@@ -210,7 +211,7 @@ const RestaurantDetail = () => {
                                 <div style={styles.imageContainer}>
                                     {item.image ? (
                                         <img
-                                            src={`http://127.0.0.1:8000${item.image}`}
+                                            src={getImageUrl(item.image)}
                                             alt={item.name}
                                             style={styles.image}
                                         />

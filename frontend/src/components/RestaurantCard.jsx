@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { getImageUrl } from '../utils/helpers'
 
 /*
 WHY a separate RestaurantCard component?
@@ -32,7 +33,7 @@ const RestaurantCard = ({ restaurant }) => {
             <div style={styles.imageContainer}>
                 {restaurant.logo ? (
                     <img
-                        src={`http://127.0.0.1:8000${restaurant.logo}`}
+                        src={getImageUrl(restaurant.logo)}
                         alt={restaurant.name}
                         style={styles.image}
                         /*
