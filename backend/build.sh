@@ -4,6 +4,7 @@ set -o errexit
 pip install -r requirements.txt
 python manage.py collectstatic --no-input
 python manage.py migrate
+python core/create_superuser.py  
 
 # > 💡 **WHY build.sh?**
 # > Render runs this script automatically when deploying.
