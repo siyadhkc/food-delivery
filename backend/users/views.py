@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.decorators import api_view, permission_classes
@@ -98,11 +98,16 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 @permission_classes([IsAdminUser])
 def block_user(request, pk):
     """
-    WHY a separate block endpoint?
-    The PDF requires block/unblock user management in admin.
-    This toggles is_active instead of deleting the user —
-    which is the correct professional approach.
+    Toggles is_active for a user.
+    SAFETY: Prevents an admin from blocking themselves, which would 
+    lock them out of the system.
     """
+    if request.user.id == int(pk):
+        return Response(
+            {'error': 'You cannot block your own account. This is a safety measure.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     try:
         user = CustomUser.objects.get(pk=pk)
         user.is_active = not user.is_active
@@ -117,3 +122,20 @@ def block_user(request, pk):
             {'error': 'User not found.'},
             status=status.HTTP_404_NOT_FOUND
         )
+
+
+class DeleteUserView(generics.DestroyAPIView):
+    """
+    Deletes a user.
+    SAFETY: Prevents self-deletion.
+    Only accessible by Admins.
+    """
+    queryset = CustomUser.objects.all()
+    permission_classes = [IsAdminUser]
+
+    def perform_destroy(self, instance):
+        if self.request.user.id == instance.id:
+            raise serializers.ValidationError(
+                {"error": "Safety Alert: You cannot delete your own admin account."}
+            )
+        instance.delete()

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import api from '../../api/axios'
 import toast from 'react-hot-toast'
-import { Users, Search, ShieldOff, ShieldCheck, Loader2 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { Users, Search, ShieldOff, ShieldCheck, Loader2, Trash2, User } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAuth } from '../../context/AuthContext'
 
 const ROLE_STYLE = {
     admin: 'bg-amber-50 text-amber-700 border-amber-100',
@@ -11,10 +12,12 @@ const ROLE_STYLE = {
 }
 
 const AdminUsers = () => {
+    const { user: currentAdmin } = useAuth()
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
     const [search, setSearch] = useState('')
     const [togglingId, setTogglingId] = useState(null)
+    const [deletingId, setDeletingId] = useState(null)
 
     useEffect(() => { fetchUsers() }, [])
 
@@ -30,6 +33,11 @@ const AdminUsers = () => {
     }
 
     const handleBlockToggle = async (userId) => {
+        if (currentAdmin && userId === currentAdmin.id) {
+            toast.error("Safety Alert: You cannot block your own account.")
+            return
+        }
+
         setTogglingId(userId)
         try {
             const response = await api.post(`/users/${userId}/block/`)
@@ -37,10 +45,32 @@ const AdminUsers = () => {
                 u.id === userId ? { ...u, is_active: !u.is_active } : u
             ))
             toast.success(response.data.message)
-        } catch {
-            toast.error('Failed to update user.')
+        } catch (error) {
+            toast.error(error.response?.data?.error || 'Failed to update user.')
         } finally {
             setTogglingId(null)
+        }
+    }
+
+    const handleDeleteUser = async (userId) => {
+        if (currentAdmin && userId === currentAdmin.id) {
+            toast.error("Safety Alert: You cannot delete your own account.")
+            return
+        }
+
+        if (!window.confirm("Are you sure you want to permanently delete this user? This action cannot be undone.")) {
+            return
+        }
+
+        setDeletingId(userId)
+        try {
+            await api.delete(`/users/${userId}/delete/`)
+            setUsers(users.filter(u => u.id !== userId))
+            toast.success("User deleted successfully.")
+        } catch (error) {
+            toast.error(error.response?.data?.error || 'Failed to delete user.')
+        } finally {
+            setDeletingId(null)
         }
     }
 
@@ -125,7 +155,16 @@ const AdminUsers = () => {
                                     ) : filteredUsers.map(user => (
                                         <tr key={user.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4 text-xs font-bold text-slate-400">#{user.id}</td>
-                                            <td className="px-6 py-4 text-sm font-semibold text-slate-800">{user.email}</td>
+                                            <td className="px-6 py-4 text-sm font-semibold text-slate-800">
+                                                <div className="flex items-center gap-2">
+                                                    {user.email}
+                                                    {currentAdmin && user.id === currentAdmin.id && (
+                                                        <span className="flex items-center gap-1 px-1.5 py-0.5 bg-primary-100 text-primary-700 text-[9px] font-black uppercase rounded-md border border-primary-200">
+                                                            <User size={8} /> You
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </td>
                                             <td className="px-6 py-4 text-sm font-semibold text-slate-700">{user.username}</td>
                                             <td className="px-6 py-4 text-sm text-slate-500 hidden md:table-cell">{user.phone || '—'}</td>
                                             <td className="px-6 py-4">
@@ -142,24 +181,42 @@ const AdminUsers = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <button
-                                                    onClick={() => handleBlockToggle(user.id)}
-                                                    disabled={togglingId === user.id}
-                                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all disabled:opacity-50 ${
-                                                        user.is_active
-                                                            ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-100'
-                                                            : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100'
-                                                    }`}
-                                                >
-                                                    {togglingId === user.id ? (
-                                                        <Loader2 size={12} className="animate-spin" />
-                                                    ) : user.is_active ? (
-                                                        <ShieldOff size={12} />
-                                                    ) : (
-                                                        <ShieldCheck size={12} />
-                                                    )}
-                                                    {user.is_active ? 'Block' : 'Unblock'}
-                                                </button>
+                                                <div className="flex items-center gap-2">
+                                                    {/* Block Button */}
+                                                    <button
+                                                        onClick={() => handleBlockToggle(user.id)}
+                                                        disabled={togglingId === user.id || (currentAdmin && user.id === currentAdmin.id)}
+                                                        title={currentAdmin && user.id === currentAdmin.id ? "You cannot block yourself" : ""}
+                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                                                            user.is_active
+                                                                ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-100'
+                                                                : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100'
+                                                        }`}
+                                                    >
+                                                        {togglingId === user.id ? (
+                                                            <Loader2 size={12} className="animate-spin" />
+                                                        ) : user.is_active ? (
+                                                            <ShieldOff size={12} />
+                                                        ) : (
+                                                            <ShieldCheck size={12} />
+                                                        )}
+                                                        {user.is_active ? 'Block' : 'Unblock'}
+                                                    </button>
+
+                                                    {/* Delete Button */}
+                                                    <button
+                                                        onClick={() => handleDeleteUser(user.id)}
+                                                        disabled={deletingId === user.id || (currentAdmin && user.id === currentAdmin.id)}
+                                                        title={currentAdmin && user.id === currentAdmin.id ? "You cannot delete yourself" : ""}
+                                                        className="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                                                    >
+                                                        {deletingId === user.id ? (
+                                                            <Loader2 size={14} className="animate-spin" />
+                                                        ) : (
+                                                            <Trash2 size={14} />
+                                                        )}
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
