@@ -96,17 +96,17 @@ const Login = () => {
                         className="w-full max-w-md"
                     >
                         {/* Heading */}
-                        <div className="mb-10 text-center sm:text-left">
-                            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">
+                        <div className="mb-6 text-center sm:text-left">
+                            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2">
                                 Welcome back.
                             </h1>
-                            <p className="text-slate-500 font-medium text-sm sm:text-base leading-relaxed max-w-sm mx-auto sm:mx-0">
-                                Enter your credentials to securely access your account and manage your orders.
+                            <p className="text-slate-500 font-medium text-xs sm:text-sm leading-relaxed max-w-xs mx-auto sm:mx-0">
+                                Enter your credentials to securely access your account.
                             </p>
                         </div>
 
                         {/* Form */}
-                        <form onSubmit={handleSubmit} className="space-y-5">
+                        <form onSubmit={handleSubmit} className="space-y-3.5">
                             {/* Email */}
                             <div className="space-y-1.5">
                                 <label htmlFor="login-email" className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
@@ -122,7 +122,7 @@ const Login = () => {
                                         onChange={handleChange}
                                         placeholder="name@example.com"
                                         autoComplete="email"
-                                        className="input-premium pl-10 pr-4 py-3.5"
+                                        className="input-premium pl-10 pr-4 py-2.5"
                                         required
                                     />
                                 </div>
@@ -143,7 +143,7 @@ const Login = () => {
                                         onChange={handleChange}
                                         placeholder="••••••••"
                                         autoComplete="current-password"
-                                        className="input-premium pl-10 pr-12 py-3.5"
+                                        className="input-premium pl-10 pr-12 py-2.5"
                                         required
                                     />
                                     <button
@@ -161,11 +161,10 @@ const Login = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className={`w-full py-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 mt-4 ${
-                                    loading
+                                className={`w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 mt-2 ${loading
                                         ? 'bg-slate-100 text-slate-400 cursor-wait'
                                         : 'bg-primary-600 text-white hover:bg-primary-700 active:scale-95 shadow-premium'
-                                }`}
+                                    }`}
                             >
                                 {loading ? (
                                     <div className="w-5 h-5 border-2 border-slate-400/30 border-t-slate-400 rounded-full animate-spin" />
@@ -190,20 +189,20 @@ const Login = () => {
                                 Create a free account
                                 <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                             </Link>
-                            <div className="pt-3">
+                            <div className="pt-2 flex flex-col gap-1.5">
                                 <Link
                                     to="/register?mode=restaurant"
-                                    className="text-xs text-slate-400 hover:text-primary-600 font-semibold transition-colors flex items-center justify-center gap-1.5"
+                                    className="text-[10px] text-slate-400 hover:text-primary-600 font-semibold transition-colors flex items-center justify-center gap-1.5"
                                 >
-                                    Register your restaurant 
-                                    <ArrowRight size={12} />
+                                    Register your restaurant
+                                    <ArrowRight size={10} />
                                 </Link>
                                 <Link
                                     to="/register?mode=delivery"
-                                    className="text-xs text-slate-400 hover:text-emerald-600 font-semibold transition-colors flex items-center justify-center gap-1.5 mt-2"
+                                    className="text-[10px] text-slate-400 hover:text-emerald-600 font-semibold transition-colors flex items-center justify-center gap-1.5"
                                 >
-                                    Become a Delivery Partner 
-                                    <ArrowRight size={12} />
+                                    Become a Delivery Partner
+                                    <ArrowRight size={10} />
                                 </Link>
                             </div>
                         </div>

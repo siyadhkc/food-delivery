@@ -57,7 +57,36 @@ function App() {
     return (
         <AuthProvider>
             <BrowserRouter>
-                <Toaster position="top-right" />
+                <Toaster 
+                    position="top-center" 
+                    toastOptions={{
+                        duration: 3500,
+                        style: {
+                            background: '#FFFFFF',
+                            color: '#020617',
+                            padding: '12px 24px',
+                            borderRadius: '20px',
+                            border: '1px solid #E2E8F0',
+                            boxShadow: '0 15px 45px -5px rgba(0, 0, 0, 0.05), 0 10px 20px -5px rgba(0, 0, 0, 0.01)',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            fontFamily: 'var(--font-display)',
+                            letterSpacing: '-0.01em'
+                        },
+                        success: {
+                            iconTheme: {
+                                primary: '#10b981',
+                                secondary: '#FFFFFF',
+                            },
+                        },
+                        error: {
+                            iconTheme: {
+                                primary: '#ef4444',
+                                secondary: '#FFFFFF',
+                            },
+                        },
+                    }}
+                />
                 <Routes>
 
                     {/* ================================

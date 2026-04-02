@@ -98,8 +98,8 @@ const Register = () => {
                             {isRestaurantMode
                                 ? 'Register your restaurant and start reaching thousands of hungry customers across Kerala.'
                                 : isDeliveryMode
-                                ? 'Become a delivery partner and enjoy freedom, competitive pay, and flexible hours.'
-                                : 'Create your account to unlock premium restaurants, lightning-fast delivery, and live order tracking.'}
+                                    ? 'Become a delivery partner and enjoy freedom, competitive pay, and flexible hours.'
+                                    : 'Create your account to unlock premium restaurants, lightning-fast delivery, and live order tracking.'}
                         </p>
                     </motion.div>
                 </div>
@@ -128,16 +128,16 @@ const Register = () => {
                             className="w-full max-w-lg"
                         >
                             {/* Heading */}
-                            <div className="mb-9 text-center sm:text-left">
-                                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">
+                            <div className="mb-6 text-center sm:text-left">
+                                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2">
                                     {isRestaurantMode ? 'Partner With Us' : isDeliveryMode ? 'Join Our Fleet' : 'Create Account'}
                                 </h1>
-                                <p className="text-slate-500 font-medium text-sm sm:text-base leading-relaxed max-w-sm mx-auto sm:mx-0">
+                                <p className="text-slate-500 font-medium text-xs sm:text-sm leading-relaxed max-w-sm mx-auto sm:mx-0">
                                     {isRestaurantMode
                                         ? 'Set up your restaurant and start reaching customers.'
                                         : isDeliveryMode
-                                        ? 'Register as a delivery agent and start earning today.'
-                                        : 'Join Savor and start ordering from Kerala\'s best restaurants.'}
+                                            ? 'Register as a delivery agent and start earning today.'
+                                            : 'Join Savor and start ordering from Kerala\'s best restaurants.'}
                                 </p>
                                 {(isRestaurantMode || isDeliveryMode) && (
                                     <Link
@@ -149,7 +149,7 @@ const Register = () => {
                                 )}
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-4">
+                            <form onSubmit={handleSubmit} className="space-y-3">
 
                                 {/* Restaurant-only fields */}
                                 <AnimatePresence>
@@ -171,7 +171,7 @@ const Register = () => {
                                                         value={formData.restaurant_name}
                                                         onChange={handleChange}
                                                         placeholder="The Gourmet Kitchen"
-                                                        className="input-premium pl-10 pr-4 py-3.5"
+                                                        className="input-premium pl-10 pr-4 py-2.5"
                                                         required
                                                     />
                                                 </div>
@@ -187,7 +187,7 @@ const Register = () => {
                                                         value={formData.restaurant_address}
                                                         onChange={handleChange}
                                                         placeholder="123 Food Street, Kochi, Kerala..."
-                                                        className="input-premium pl-10 pr-4 py-3.5 resize-none min-h-[80px]"
+                                                        className="input-premium pl-10 pr-4 py-2.5 resize-none min-h-[60px]"
                                                         required
                                                     />
                                                 </div>
@@ -209,7 +209,7 @@ const Register = () => {
                                                 onChange={handleChange}
                                                 placeholder="johndoe"
                                                 autoComplete="username"
-                                                className="input-premium pl-10 pr-4 py-3.5"
+                                                className="input-premium pl-10 pr-4 py-2.5"
                                                 required
                                             />
                                         </div>
@@ -225,7 +225,7 @@ const Register = () => {
                                                 onChange={handleChange}
                                                 placeholder="+91 9876543210"
                                                 autoComplete="tel"
-                                                className="input-premium pl-10 pr-4 py-3.5"
+                                                className="input-premium pl-10 pr-4 py-2.5"
                                             />
                                         </div>
                                     </div>
@@ -243,7 +243,7 @@ const Register = () => {
                                             onChange={handleChange}
                                             placeholder="name@example.com"
                                             autoComplete="email"
-                                            className="input-premium pl-10 pr-4 py-3.5"
+                                            className="input-premium pl-10 pr-4 py-2.5"
                                             required
                                         />
                                     </div>
@@ -262,7 +262,7 @@ const Register = () => {
                                                 onChange={handleChange}
                                                 placeholder="Min 8 chars"
                                                 autoComplete="new-password"
-                                                className="input-premium pl-10 pr-10 py-3.5"
+                                                className="input-premium pl-10 pr-10 py-2.5"
                                                 required
                                             />
                                             <button type="button" onClick={() => setShowPass(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
@@ -281,7 +281,7 @@ const Register = () => {
                                                 onChange={handleChange}
                                                 placeholder="Repeat password"
                                                 autoComplete="new-password"
-                                                className="input-premium pl-10 pr-10 py-3.5"
+                                                className="input-premium pl-10 pr-10 py-2.5"
                                                 required
                                             />
                                             <button type="button" onClick={() => setShowPass2(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
@@ -295,11 +295,10 @@ const Register = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className={`w-full py-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 mt-4 ${
-                                        loading
+                                    className={`w-full py-4 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 mt-4 ${loading
                                             ? 'bg-slate-100 text-slate-400 cursor-wait'
                                             : 'bg-primary-600 text-white hover:bg-primary-700 active:scale-95 shadow-premium'
-                                    }`}
+                                        }`}
                                 >
                                     {loading ? (
                                         <div className="w-5 h-5 border-2 border-slate-400/30 border-t-slate-400 rounded-full animate-spin" />
@@ -317,10 +316,10 @@ const Register = () => {
                                 <p className="text-slate-500 text-sm font-medium">Already have an account?</p>
                                 <Link
                                     to="/login"
-                                    className="inline-flex items-center gap-2 text-primary-600 font-bold hover:text-primary-700 transition-colors group"
+                                    className="inline-flex items-center gap-2 text-primary-600 font-bold hover:text-primary-700 transition-colors group text-sm"
                                 >
                                     Sign in to your account
-                                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                                 </Link>
                                 {!isRestaurantMode && (
                                     <div className="pt-1">
