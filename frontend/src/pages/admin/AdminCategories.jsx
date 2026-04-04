@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../../api/axios'
 import { getImageUrl } from '../../utils/helpers'
 import toast from 'react-hot-toast'
+import { useAuth } from '../../context/AuthContext'
 import {
     Plus, Image as ImageIcon, Pencil, Trash2, X,
     AlertCircle, Search, Loader2, CheckCircle2, ChevronDown, ChevronUp, FolderOpen
@@ -9,6 +10,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 
 const AdminCategories = () => {
+    const { user } = useAuth()
+    const isRestaurantMode = user?.role === 'restaurant' && !!user?.restaurant_id
+    const restaurantId = user?.restaurant_id ? String(user.restaurant_id) : ''
     const [restaurants, setRestaurants]       = useState([])
     const [categoriesByRest, setCategoriesByRest] = useState({})  // { restaurantId: [cats] }
     const [loading, setLoading]               = useState(true)
@@ -25,7 +29,20 @@ const AdminCategories = () => {
     useEffect(() => {
         const init = async () => {
             try {
-                const res = await api.get('/restaurant/restaurants/?page_size=100')
+                if (isRestaurantMode && restaurantId) {
+                    const [restaurantRes, categoriesRes] = await Promise.all([
+                        api.get(`/restaurant/restaurants/${restaurantId}/`),
+                        api.get(`/menu/categories/?restaurant=${restaurantId}&page_size=100`),
+                    ])
+                    setRestaurants([restaurantRes.data])
+                    setCategoriesByRest({
+                        [restaurantId]: categoriesRes.data.results || [],
+                    })
+                    setExpandedRest(restaurantId)
+                    return
+                }
+
+                const res = await api.get('/restaurant/restaurants/?page_size=200')
                 setRestaurants(res.data.results || [])
             } catch {
                 toast.error('Failed to load restaurants.')
@@ -34,10 +51,13 @@ const AdminCategories = () => {
             }
         }
         init()
-    }, [])
+    }, [isRestaurantMode, restaurantId])
 
     // ── When a restaurant accordion opens, fetch its categories ──────────────
     const toggleRestaurant = async (restId) => {
+        if (isRestaurantMode) {
+            return
+        }
         if (expandedRest === restId) {
             setExpandedRest(null)
             return
@@ -65,7 +85,7 @@ const AdminCategories = () => {
 
     const openCreateModal = (restId = '') => {
         setEditingCategory(null)
-        setModalRestaurant(restId)
+        setModalRestaurant(restId || restaurantId)
         setName('')
         setImageFile(null)
         setShowModal(true)
@@ -117,9 +137,11 @@ const AdminCategories = () => {
         }
     }
 
-    const filteredRestaurants = restaurants.filter(r =>
-        r.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    const filteredRestaurants = isRestaurantMode
+        ? restaurants
+        : restaurants.filter(r =>
+            r.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
 
     if (loading) {
         return (
@@ -139,28 +161,35 @@ const AdminCategories = () => {
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Admin Panel</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                {isRestaurantMode ? 'Partner Portal' : 'Admin Panel'}
+                            </span>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
                             Menu <span className="text-primary-600 font-light italic">Sections</span>
                         </h1>
                         <p className="text-slate-500 font-medium mt-2">
-                            Restaurant-specific sections like "Must Try", "Specials", "Beverages"
+                            {isRestaurantMode
+                                ? 'Manage sections for your restaurant only.'
+                                : 'Restaurant-specific sections like "Must Try", "Specials", "Beverages"'
+                            }
                         </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="relative group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Filter restaurants…"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-12 pr-6 py-3.5 bg-white border border-slate-200 rounded-[20px] text-sm font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all w-full sm:w-[240px] shadow-sm"
-                            />
-                        </div>
+                        {!isRestaurantMode && (
+                            <div className="relative group">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                <input
+                                    type="text"
+                                    placeholder="Filter restaurants…"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-12 pr-6 py-3.5 bg-white border border-slate-200 rounded-[20px] text-sm font-bold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all w-full sm:w-[240px] shadow-sm"
+                                />
+                            </div>
+                        )}
                         <button
-                            onClick={() => openCreateModal()}
+                            onClick={() => openCreateModal(isRestaurantMode ? restaurantId : '')}
                             className="bg-slate-900 text-white px-8 py-3.5 rounded-[20px] font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-primary-600 active:scale-95 transition-all shadow-xl shadow-slate-900/10"
                         >
                             <Plus size={18} strokeWidth={3} />
@@ -212,7 +241,11 @@ const AdminCategories = () => {
                                             <Plus size={13} strokeWidth={3} />
                                             Add
                                         </button>
-                                        {isOpen ? <ChevronUp size={18} className="text-slate-400" /> : <ChevronDown size={18} className="text-slate-400" />}
+                                        {!isRestaurantMode && (
+                                            isOpen
+                                                ? <ChevronUp size={18} className="text-slate-400" />
+                                                : <ChevronDown size={18} className="text-slate-400" />
+                                        )}
                                     </div>
                                 </button>
 
@@ -331,21 +364,29 @@ const AdminCategories = () => {
 
                                 {/* Form */}
                                 <form onSubmit={handleSubmit} className="p-10 space-y-7">
-                                    {/* Restaurant picker */}
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Restaurant</label>
-                                        <select
-                                            value={modalRestaurant}
-                                            onChange={(e) => setModalRestaurant(e.target.value)}
-                                            className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
-                                            required
-                                        >
-                                            <option value="" disabled>Select restaurant…</option>
-                                            {restaurants.map(r => (
-                                                <option key={r.id} value={r.id}>{r.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                    {!isRestaurantMode ? (
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Restaurant</label>
+                                            <select
+                                                value={modalRestaurant}
+                                                onChange={(e) => setModalRestaurant(e.target.value)}
+                                                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all"
+                                                required
+                                            >
+                                                <option value="" disabled>Select restaurant…</option>
+                                                {restaurants.map(r => (
+                                                    <option key={r.id} value={r.id}>{r.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Restaurant</label>
+                                            <div className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800">
+                                                {restaurants[0]?.name || 'Your restaurant'}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Section name */}
                                     <div className="space-y-2">

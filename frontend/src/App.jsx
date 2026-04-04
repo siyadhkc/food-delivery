@@ -30,6 +30,7 @@ import AdminPayments from './pages/admin/AdminPayments'
 // Restaurant Pages
 import RestaurantDashboard from './pages/restaurant/RestaurantDashboard'
 import RestaurantMenu from './pages/restaurant/RestaurantMenu'
+import RestaurantCategories from './pages/restaurant/RestaurantCategories'
 import RestaurantOrders from './pages/restaurant/RestaurantOrders'
 import RestaurantProfile from './pages/restaurant/RestaurantProfile'
 
@@ -172,7 +173,7 @@ function App() {
                             <RestaurantRoute><RestaurantMenu /></RestaurantRoute>
                         } />
                         <Route path="/restaurant-admin/categories" element={
-                            <RestaurantRoute><AdminCategories /></RestaurantRoute>
+                            <RestaurantRoute><RestaurantCategories /></RestaurantRoute>
                         } />
                         <Route path="/restaurant-admin/orders" element={
                             <RestaurantRoute><RestaurantOrders /></RestaurantRoute>
