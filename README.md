@@ -135,6 +135,7 @@ food-delivery/
 - **Framework**: `React 19` + `Vite` for ultra-fast HMR.
 - **Styling**: `Tailwind CSS 4.0` (Native engine) for premium, design-system-first styling.
 - **Animations**: `Framer Motion` for high-end micro-interactions and transitions.
+- **Mapping Engine**: `Leaflet.js` & `React-Leaflet` rendering live-updating interactive order tracking maps.
 - **Icons**: `Lucide React` for architectural consistency.
 - **State & Auth**: `Context API` + `Axios Interceptors` for silent JWT token rotation.
 
@@ -159,7 +160,7 @@ Savor operates on a robust, multi-layered architecture designed to strictly sync
   - **Local Layer:** Inside a restaurant, the menu is strictly grouped by `Restaurant Categories` (e.g., "Must Try", "Specials").
 - **Cart Constraints:** Persistent local state ensuring single-restaurant cart integrity (prevents cross-restaurant checkout conflicts).
 - **Checkout Pipeline:** Interfaced with Razorpay for rapid, secure payment verification and order instantiation.
-- **Telemetry:** Real-time polling logic to track the order lifecycle (Pending → Preparing → Out for Delivery → Delivered).
+- **Live GPS Tracking (Telemetry):** Real-time integration using `Leaflet.js` rendering an interactive map, plotting the active delivery agent's physical coordinates and tracking precise lifecycle milestones (Pending → Preparing → Out for Delivery → Delivered).
 
 ### 2. 🏬 Restaurant Fulfillment Pipeline
 - **Command Center:** High-level metrics visualization (revenue, active tickets, and aggregate volume).
@@ -173,10 +174,10 @@ Savor operates on a robust, multi-layered architecture designed to strictly sync
 ### 3. 🛵 Delivery Agent Logistics Matrix
 - **Agent Presence:** Bi-modal toggle for `Available/Offline` status broadcast.
 - **Dispatch Queue:** Agents ingest orders isolated to their geo-fenced deployment parameter (e.g., Kochi agents only see Kochi dispatches).
-- **Execution Workflow:**
+- **Execution & Telemetry Workflow:**
   - Claim unassigned payload from network.
-  - Engage `Out For Delivery` status upon restaurant handover.
-  - Fire `Delivered` endpoint to close the operational loop and instantly calculate earnings payload.
+  - Engage `Out For Delivery` status upon restaurant handover, safely broadcasting live GPS coordinates to the customer's portal during transit.
+  - Fire `Delivered` endpoint to close the operational loop and instantly calculate the earnings payload.
 
 ### 4. 👑 System Administration Oversight
 - **Ecosystem Governance:** God-mode capabilities across the entire data mesh (Customers, Partners, Fleet).
