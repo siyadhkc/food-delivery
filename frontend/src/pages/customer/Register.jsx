@@ -70,7 +70,8 @@ const Register = () => {
             <div className="hidden lg:flex lg:w-[42%] bg-slate-900 relative overflow-hidden flex-col justify-between p-12 shrink-0">
                 <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary-600/30 blur-[120px] rounded-full" />
                 <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-emerald-600/20 blur-[130px] rounded-full" />
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop')] bg-cover bg-center opacity-20" />
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1974&auto=format&fit=crop')] bg-cover bg-center opacity-25 filter blur-[4px] scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
 
                 <div className="relative z-10 flex flex-col justify-between h-full">
                     <div className="flex items-center gap-3 text-white">

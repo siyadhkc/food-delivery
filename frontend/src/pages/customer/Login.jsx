@@ -47,7 +47,8 @@ const Login = () => {
                 {/* Background glows */}
                 <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary-600/30 blur-[120px] rounded-full" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-orange-600/20 blur-[130px] rounded-full" />
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20" />
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-25 filter blur-[4px] scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-3 text-white mb-16">
