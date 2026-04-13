@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit
-python manage.py seed_kerala.py
 pip install -r requirements.txt
-python manage.py collectstatic --no-input
 python manage.py migrate
+python manage.py seed_kerala
+python manage.py collectstatic --no-input
 python manage.py shell -c "
 import os
 from users.models import CustomUser
