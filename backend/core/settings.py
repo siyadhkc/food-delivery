@@ -19,10 +19,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
     'cloudinary',
-    
 
     # Third-party
     'rest_framework',
@@ -42,6 +41,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -128,22 +128,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
-    # """
-    # WHY ROTATE_REFRESH_TOKENS = True?
-    # Every time you use a refresh token to get a new
-    # access token, you also get a NEW refresh token.
-    # The old one is blacklisted automatically.
-    # This is called refresh token rotation — it's the
-    # secure standard for JWT-based auth in production.
-    # """
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
-    # """
-    # WHY Bearer?
-    # This is the industry standard prefix for JWT tokens.
-    # React will send: Authorization: Bearer <your_token>
-    # The PDF specifically mentions this format.
-    # """
 }
 # Add at the bottom
 RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID')
@@ -160,9 +146,6 @@ DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
 
 import dj_database_url
 import os
-
-# WhiteNoise for static files
-MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 import cloudinary
 
@@ -201,17 +184,10 @@ else:
     }
 
 # WHY these media settings?
-# When using local storage (DEBUG=True), Django needs to know:
-# MEDIA_URL: The URL prefix for access (e.g. /media/logo.png)
-# MEDIA_ROOT: The actual folder on your hard drive where files are saved.
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_URL = '/static/'
-# WHY STORAGES dict instead of STATICFILES_STORAGE?
-# Django 4.2+ deprecated STATICFILES_STORAGE in favour of STORAGES dict.
-# Django 6.0 (your version) will WARN loudly if you use the old setting.
-# This is the new correct way to configure both default and static storage.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Production database — reads DATABASE_URL from environment
@@ -220,20 +196,12 @@ if os.environ.get('DATABASE_URL'):
         os.environ.get('DATABASE_URL'),
         conn_max_age=600,
     )
-    """
-    WHY dj_database_url?
-    Render gives you a DATABASE_URL like:
-    postgresql://user:pass@host:5432/dbname
-    dj_database_url parses this into Django's
-    DATABASES dict format automatically.
-    No need to manually set NAME, USER, PASSWORD etc.
-    """
 
-# Production CORS — only allow your Vercel frontend
+# Production CORS
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://food-delivery-seven-bice.vercel.app',  # ← correct URL
+    'https://food-delivery-seven-bice.vercel.app',
 ]
 CORS_ALLOW_ALL_ORIGINS = False
 
@@ -241,17 +209,19 @@ CORS_ALLOW_ALL_ORIGINS = False
 # PRODUCTION SECURITY SETTINGS (Only active when DEBUG=False)
 # ==============================================================================
 if not DEBUG:
-    # Force HTTPS redirect (ensure your Render domain supports SSL)
     SECURE_SSL_REDIRECT = True
-    # HSTS settings (1 year)
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    # Cookie security
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    # Extra protection
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# Security for production
+
+# ==============================================================================
+# LEGACY COMPATIBILITY FALLBACKS (For Django 6.0+ vs Old Packages)
+# ==============================================================================
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = STORAGES['default']['BACKEND']
+    STATICFILES_STORAGE = STORAGES['staticfiles']['BACKEND']
